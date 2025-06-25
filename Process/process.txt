@@ -1,0 +1,69 @@
+- Processes and Programs
+Everything is considered as process.
+- Process ID and Parent Process ID
+- Memory Layout of a Process.
+- Examples of different memory section of Process using C Code.
+* Refer program_process.png
+- A process is an instance of an executing program.
+- A program is a file containing a range of information that describes how to construct a process at run time.
+- In Linux Processes have a Parent-child relation.
+- A Process is created by its parent
+- In Linux startup sequence
+- Process ‘0’ is first process – called ‘swapper’ process
+- Process ‘1’ is ‘Init’ Process – Init process plays an important role. It creates and monitors set of  other process.
+- Init process becomes the parent of any ‘Orphan’ Process.
+- Man 8 init – for manual page on ‘init’ process.
+- #include <unistd.h>
+pid_t getpid(void);
+Always successfully returns process ID of caller process
+The Linux kernel limits process IDs to being less than or equal to 32,767(default on 32 bit).
+/proc/sys/kernel/pid_max – contains 1 greter than actual max number of process allowed in system.
+‘Ps -ef’ – get running process and PID
+
+Process states:
+```````````````
+A process is “created” state using fork() system call.
+‘Running’ state – Process is running in main memory.
+‘Ready to Run’ in ‘Main Memory’
+‘Ready to Run’ in ‘Swap Memory’
+‘Sleep’ state in ‘Main Memory’
+‘Sleep’ state in ‘Swap memory’
+‘Blocked’ state in ‘Main Memory’
+‘Blocked’ state in ‘Swap Memory’
+‘Terminated’ state
+* Refer process_states.png
+
+Memory Layout of process:
+`````````````````````````
+The different segments of  a process are..
+1. Text segment – The code resides here
+2. Data Segment – for data variables during compile time.
+    A. Initialised data segment
+    B. Un-Initialised data segment (BSS)
+3. Stack segment – for local variables
+4. Heap segment – for dynamic memory data’s
+
+1)Text Segment:
+The ‘text segment’ contains the code of the program that is ran.
+This segment of memory cannot be written, so that the code is not altered by any pointers.
+This means ‘Text segment’ is Read only.
+
+2)Data segment:
+The ‘initialized data segment’ contains global and static variables that are ‘explicitly initialized’ with value in the code.
+The uninitialized data segment contains global and static variables that are not explicitly initialized in the code. The system initializes all value’s of this segment to ‘0’.
+
+3)Stack segment:
+The stack is a dynamically growing and shrinking segment containing local data’s(stack frames) of functions.
+One stack frame is allocated for each function that are called. A frame stores the function’s local variables, function arguments
+
+4)Heap segment:
+The heap is an area from which memory (for variables) can be dynamically allocated at run time.
+
+Environment of process:
+```````````````````````
+Each process set of  strings called the environment list, or simply the environment. Each of these strings is a definition of the form ‘name=value’.
+Thus, the environment represents a set of ‘name-value’ pairs that can be used to hold arbitrary information. The names in the list are referred to as environment variables.
+
+
+
+

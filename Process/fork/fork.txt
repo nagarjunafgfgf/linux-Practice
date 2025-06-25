@@ -1,0 +1,43 @@
+fork() is a system call which will create a new process
+- In many applications, creating multiple processes can be a useful way of dividing up a task.
+- Divinding tasks up in this way often makes applciation desing simpler.
+- It also permits greatwewr concurrency(i.e., more tasks or requests can be handled simultaneously)
+- This fork() system call creates a new process (the child) which is almost exact duplicate of the calling process (the parent).
+
+prototype:
+``````````
+pid_t fork(void);
+In parent : returns process ID of child on success
+            -1 on error
+In child  : always return 0
+
+- The key points to understand fork() is that after it has completed its work, two processes exist & in each process,
+excution continues from the point where fork() returns.
+- THe two processes are executing the same program text, but they have separte copies of the stack, data & heap segments.
+- The child's stack, data & heap segments are initially exact duplicates of the corresponding parts of the parent memory.
+- After the fork(), each process can modify the variables in its stack, data & heap segments without affecting the other process.
+
+wait() system call:
+```````````````````
+- Used to synchronise parent and child process and get exit status of child process.
+
+- Each process has a entry in process table.
+- when a process ends, all of the memory & is allocated (but a entry of exited process is still mainitained in process table).
+- The parent can read the child's exit status by executing the wait system call.
+- The parent process receives signal SIGCHLD when child prpcess dies.
+
+wait() system call also gives information on how the child process exited.
+
+#include <sys/wait.h>
+pid-t wait(int* status);
+
+waitpid() system call also gives information on how the child process exited.
+
+#include <sys/wait.h>
+pid-t waitpid(pid_t pid, int* status, int options);
+
+
+Exit() system call:
+```````````````````
+TO terminate the process
+

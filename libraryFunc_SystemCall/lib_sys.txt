@@ -1,0 +1,22 @@
+Library Functions:
+``````````````````
+- The Linux library functions are the C standard library.
+- The C standard library is also called as libc.
+- The C standard library provides header files that needs to be included in user’s application program, in order to use the standard library function calls.
+- A library is a collection of pre-compiled  code.
+- The library contains several functions together and they form a package or library. The library help to reuse the code by avoiding writing same code again and again.
+- For example, the standard C library provide ‘stdio.h’ header file, and this header file has to be included in user program inorder to use the library function ‘printf’.
+- Some Library functions are designed over the system calls, inorder to provide more additional functionality in the library functions.
+
+
+System Call:
+````````````
+- A system call can be considered as a interface through which the User application code enters Kernel mode.
+- Thus the system runs in kernel mode on behalf of the user program during system call execution.
+- System calls can be invoked from user application in 2 ways.
+A) Directly calling the system call
+B) The user code calls the library function, and this inturn calls system calls when required.
+- Few examples of system calls are
+open(), close(), read(), write() etc.
+- The system calls called through library functions are example
+printf(), inturn calls the write() system call

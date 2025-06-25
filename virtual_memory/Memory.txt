@@ -1,0 +1,25 @@
+Similar to other modern kernels, Linux has a technique known as virtual memory management. The aim of this technique is to make efficient use of both the CPU and RAM (physical memory/Main Memory)
+Each Process has its own memory space(4GB)  on a 32 bit system.
+Each process has a private user space memory. This means one process cannot access memory of other process directly.
+Each process has below seperate Memory segments(the size of each memory segemnt is configurable)
+a. Text segment
+b. Data segment(Initialised and uninitialised)
+c. Stack segment
+d. Heap segment
+The Process virtual memory has a user space, and a Kernel space. This memory region is configurable, but it is usually 3GB user space and 1GB Kernel space.
+
+page Table:
+```````````
+A virtual memory of each process, is split into small, fixed size units called ‘pages’ (default page size usually is 4096 Bytes, but configurable to different size).
+Similarly, RAM(Physical memory) is divided into a series of page frames of the same size.
+At any given point of time, only some of the ‘pages’ of a process are present in physical memory (RAM), these pages are called ‘Resident Set’.
+Copies of the unused pages(whose entry is not present in page table) of a process are maintained in the swap area ( usually disk space)  and loaded into physical memory, when required.
+- Frame size varies – generally 4K, 8K or 16K and is configurable.
+- Two or more processes can share memory. This is possible by having page-table entries of different processes refer to the same pages of RAM. Memory sharing occurs below circumstances:
+a. Multiple processes executing the same program can share a single (read-only) copy of the program code.
+b. Processes can use the shared memory with other processes to exchange data’s
+
+page Fault:
+```````````
+When a process tries to access a page that is not currently present in physical memory(and page table), a page fault occurs,
+ at this point the kernel suspends execution of the process while the page is loaded from swap memory into Main memory(RAM).

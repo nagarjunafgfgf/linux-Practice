@@ -1,0 +1,26 @@
+Exec() familu library Functions:
+````````````````````````````````
+. execl()
+. execlp()
+. execle()
+. execv()
+. execvp()
+. execvpe()
+
+- Refer to "man exec" for syntax on manual pages.
+- None of the above returns on success;
+- all returns -1 on error
+Note: execve() is a system call, where as exec's shown in this section are library functions built over 'execve()'
+`````
+Execve() - system call loads new program into a process's memory 
+Durung this operation, the old program is discarded and its virtual memory is repalced by new program's virtual memory.
+The process's stack, data, 7 heap are replaced by those of the new program.
+The new program starts its execution from mail() function.
+
+execve() - system call:
+```````````````````````
+#include <unistd.h>
+int execve(const char* pathname, char* const argv[], char* const envp[]);
+never returns on success;
+returns -1 on error
+Refer man 2 execve for further information

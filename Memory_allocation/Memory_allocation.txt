@@ -1,0 +1,85 @@
+Memory allocation:
+``````````````````
+a process can allocate dynamic memory by increasing the size of the heap,
+Memory allocated is contiguous virtual memory that begins after the uninitialized data segment of a process in a virtual memory map.
+It grows and shriks as memory is allocated and freed.
+the cuurent limit of the heap is referred to as the'program break'.
+When dynamic memory is allocated 'Program break' increases.
+after the process break is increased, the process may access any address in the newly allocated area.
+
+system calls:
+`````````````
+a. Brk()
+````````
+#include <unistd.h>
+int brk(void *mem_loc);
+brk() on success sets 'program break' to new memory lcoation spefied by brk().
+success: return 0 on success
+Fails  : -1 on error
+
+b. sbrk()
+`````````
+#include <unistd.h>
+int sbrk(intptr_t increment);
+success: Returns 'program break' which is virtual memory lcoation on success
+Fails  : (void*) -1 on error and 'errno' is set to ENOMEM(out of memory)
+intptr_t : integer data type
+
+Library Functions:
+``````````````````
+a. malloc():
+``````````
+In general, C programs use the malloc family of functions to allocate and deallocate memory on the heap.
+These functions are built over brk() ans sbrk()
+#include <stdlib.h>
+void *malloc(size_t size);
+success: returns pointer to allocated memory on success
+Fail   : NULL on error
+
+b. calloc()
+```````````
+When process terminates, by default the memory of a process is freed.
+By good practise when the memory is utilised, It must be explicitly freed by programmer.
+The calloc() function allocates memory for an array of identical items.
+#include <stdlib.h>
+void *calloc(size_t numitems, size_t size);
+Success: Returns pointer to aloocated memory on success
+Fail   : NULL on error
+
+c. realloc()
+```````````
+When we are increasing the size of block memory, realloc() attempts to form a single block.
+If the bolck lies at the end of the heap< the realloc() expands the heap.
+If the block of memory lies in the middle of the heap and there is insufficient free space immediately following it,
+ realloc() allocates a new block of memory and copies all existing data from old to new block.
+Care must be taken in above case as the old memory location & nemly allocated memory location may not both be same,
+ Hence storing memory address before realloc() and later using same memory after realloc for memory access may give wrong results.
+
+#include <stdlib.h>
+void *realloc(void *ptr, size_t size);
+Success: Returns pointer to allocated memory on success
+Fail   : Null on error
+
+Free()
+```````
+This function is used to free the dynamically allocated memory from heap.
+This needs to be called only when memory is allocated using malloc() or calloc() or realloc()
+
+#include <stdlib.h>
+void free(void *ptr);
+
+free() doesn't lower the program break, it adds the freed block of memory to a list of free blocks that can be used by future calls to malloc()
+the block of memory being freed can be in the middle of the heap, rather than at the end of the heap, so that lowering the program break is not done during free()
+
+d. alloca()
+```````````
+Like the functions in the malloc, alloca() allocates memory dynamically, but this is not allocated from heap, 
+alloca() obtains memory from the stack by increasing the size of the stack frame of current executing function.
+
+#include<alloca.h>
+void *alloca(size_t size);
+Returns pointer to allocated block of memory which is in stack virtual address
+
+Please refer manual pages for further references
+System calls - man 2 <functionname>
+Library functons - man <functionname>
