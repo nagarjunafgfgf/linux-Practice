@@ -1,0 +1,77 @@
+Posix - Message Queue:
+``````````````````````
+- Message queue can be used to pass messages b/w processes
+- Unlike PIPES & FIFO which are 'Byte' oriented IPC where as Message Queue is 'message' oriented IPC
+- Readers & writers communicate each other in units of messages.
+- POSIX message queues permit each message to be assigned a priority.
+- Priority allows high-priority messages to be queued ahead of low-priority messages
+- Message queue entry is present in file system in /dev/mqueue
+
+    System Calls:
+    `````````````
+    mq_open() - functions creates a new message queue or opens an existing queue returning amessage queue descriptor for use in later calls
+    mq_close() - function closes a message queue that the process previously opened
+    mq_unlink() - function removes a message queue name & marks the queue for deletion when all processes have closed it 
+    mq_send() - function writes amessage to a queue
+    mq_receive() - function reads a message from queue
+    mq_setattr() - function which sets any parameter
+    mq_getattr() - function will display attribute values
+
+    syntax:
+    ```````
+        mq_open():
+        ``````````
+        #include <fcntl.h>
+        #include <sys/stat.h>
+        #include <mqueue.h>
+
+        mqd_t mq_open(const char* name, int oflag);
+        mqd_t mq_open(const char* name, int oflag, mode_t mode);
+        struct mq_attr *attr;
+
+        - Returns a message queue descriptor on success and (mqd_t) -1 on error
+        Note: The 'name' should always start with '/'
+        Eg: /my_queue
+
+        - Oflag - specifies the different options in which the message queue can be opened. One of the below flag has to be specified
+        O_RDONLY
+        O_WRONLY
+        O_RDWR
+        - below one or more flags can be order
+        O_CREAT
+        O_EXCL
+        O_NONBLOCK
+
+        - Refer 'man 3 mq_open' for more details
+        - Mode - If O_CREAT is specified in 'oflag', then mode refers to the permission in which the message queue is created(Read/Write)
+        Note: oflag & mode used here are similar to parameters used in open() system calls to open regular files.
+
+            Attributs:
+            ``````````
+            struct mq_attr{
+                long mq_flags;
+                long mq_maxmsg; // maximim no.of messages in queue (in bytes)
+                long mq_msgsize; //maximum size of a message
+                long mq_curmsgs; // no. of messages currently in queue 
+            }
+        
+        mq_send():
+        ``````````
+        #include <mqueue.h>
+        int mq_send(mqd_t mqdes, const char* msg_ptr, size_t msg_len, unsigned int msg_prio);
+        - Returns 0 on success & -1 on error.
+
+        mq_receive();
+        `````````````
+        #include <mqueue.h>
+        ssize_t mq_receive(mqd_t mqdes, const char* msg_ptr, size_t msg_len, unsigned int msg_prio);
+        - Returns no.of bytes in received messages on success & -1 on error.
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,127 @@
+Introduction to POSIX Threads:
+`````````````````````````````
+POSIX: Portable opening system interface
+
+Pthread crrate:
+```````````````
+- When a programs tarted, the result process consists of a single thread called initial or main thread.
+- The pthread_create() finction creates a new thread
+    #include <pthread.h>
+int pthread_create(pthread_t* thread, const pthread_attr_t* attr, void*(*start)(void *), void* arg);
+- Return 0 on success and positive error no on error
+
+Ex:
+```
+    pthread_t* thread;
+    int S;
+    s = pthread_create(&thread, NULL, func, &arg);
+    if (s != 0)
+    {
+        Error creating thread;
+    }
+
+- The program is linked with the libptjhread library (the equivalent of -lpthread)
+gcc <prog>.c -lpthread
+
+Pthread ID:
+```````````
+- Each thread within a process is uniquely identified by a theread ID
+- This ID is returned to the caller of pthread_create()
+- thread can obtain its own ID using pthread_self()
+    #include <pthread.h>
+    pthread_t pthread_self(void);
+
+- A thread can get its own thread Id by calling pthread-self()
+- Applications of thread ID are
+
+Thread Termination:
+```````````````````
+The execution of thread termination in one of the below ways:
+    1) the thread's start function calls a return with return value for the thread
+    2) the thread calls pthread_exit()
+    3) the thread is cancelled using pthread_cancel()
+    4) Main thread performs a return from main(), this causes all threads in the process to terminate immediately
+
+    pthread_exit();
+    ```````````````
+    - the thread_exit() terminates the calling thread & specifies a return value, this value can be obtained in main thread by calling pthrrad_join()
+        #include <pthread>
+        void pthread_exit(void* retval);
+    - the retval argument specifies the return value for the thread
+    - If the main thread calls pthread_exit() instead of calling exit(), return() THen the other thread continues to exit
+
+pthread_join():
+```````````````
+- The pthread_join() when called from main thread. waits for the specified to terminate.
+- If that thread has already terminated, pthread_join() returns immediately.
+    int pthread_join(pthread_t thread, void** retval);
+- Returns 0 on success and error number on error
+- The task that pthread_join() performs for threads is similar to that performed by waitpid() for processes.
+- The main use case of using pthread_join is that main thread should wait for all threads it has created & then only should terminate itself in the end.
+
+Detaching a thread:
+```````````````````
+    pthrad_detach():
+    ````````````````
+    - By deafault a thread is joinable, this means that when it terminates another thread can obtain its return value using pthrad_join()
+    - If a joinable thread is not joined by calling pthread_join() then the terminated thread becomes a Zombie thread, consuming system memory resource.
+    - pthrad_detach() - the system automatically celan up terminated thread, no need of calling pthread_join()
+        #include <pthread.h>
+        int pthread_detach(pthread_t thread);
+    - Returns 0 on success & a positive error number on error
+
+    pthread_cancel():
+    `````````````````
+    - Used to cancel/terminate a specific thread
+        #include <pthead.h>
+        int pthread_cancel(pthread_t thread);
+    - Returns 0 on success & a positive error number on error
+
+Thread Synchronisation:
+```````````````````````
+- one of hte main advantage of threads are that they can share information through global variables (data segment, heap segment) 
+- Programmer has to take care that multi-threads do not attempt to modify/read the same global variable at the same time.
+- "Critical section" is used to refer to a section of code that accesses a shared resource & whose execution should be atomic else synchronisation issues arise.
+- It means that the shared resources have to be used in protected manner to overcome synchronisation issues
+    These are two types:
+    MUTEX(mutual Exclusion):
+    ````````````````````````
+    - MUTEX is a type  of lock (its data type is pthread_mutex_t)
+    - To avoid the problems that can occur when multiple threads try to access/modify a shared variable, We must use a mutex (short for mutual exclusion)
+    - More genearally, mutexes can be used to ensure atomic access to any shared resource.
+    - a mutex has two states: locked & unlocked
+    - At any moment, at most one thread ay hold the lock on a mutex & hence only that thread can execute the critical section.
+    - When a thread lockes a mutex, it becomes the owner of that mutex. Only the owner can unlock the mutex.
+
+        Operation steps:
+        ````````````````
+        - Lock the mutex for the shared resource
+        - Access the shared resource, perform opertion on shared resource as required
+        - Unlock the mutex
+
+        Statically allocated Mutexes:
+        `````````````````````````````
+        - A mutex can either be allocated as a static variable or be created dynamically at runtime.
+        pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+
+        syntax:
+        ```````
+        #include <pthread.h>
+        int pthread_mutex_lock(pthread_mutex_t* mutex);
+        int pthread_mutex_lock(pthread_mutex_t* mutex);
+        
+        - Both return 0 on success & a positive error number on error
+
+        Dead Lock:
+        ``````````
+        - Sometimes a thread needs to simultaneously access two or more different shared resources. Each of which is governed by separate mutex.
+        - Deal lock can also be caused, if a thread has already locked a mutex & same thred is trying to lock same mutex again.
+
+            Deadlock avoidance:
+            ```````````````````
+            - The simplest way to avoid deadlocks is to define a mutex hierarchy
+            - Threads can lock the same set of mutexes, they should always lock them in the same order.
+            - For example, In a scenario the deadlock could avoided if two threads always lock the mutexes in the order mutex1 followed by mutex2.
+
+    Conditional Variables:
+    ``````````````````````

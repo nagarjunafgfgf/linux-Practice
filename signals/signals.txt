@@ -1,0 +1,67 @@
+Signals:
+````````
+- Signals are s/w interrupts that provides a mechanism for handling asynchronous events.
+- These events can originate from outside the system such as when the user generates the interrupt charactet by pressing ctrl+C or from activities within the system.
+- In Linux these are different signals & have a unique numbers bu which they are identified.
+- Signals have a very precie lifestyle. 
+- First a signal raised, kernal then stores the signal until it is able to deliver it. Finally the signals are delivered to corresponding process.
+
+The kernal can perform one of three actions depending  on what the process asked it to do 
+1) "ignore the signal" - No action is taken
+
+       ***** These are two signals that can not be ignored: SIGKILL & SIGSTOP
+    
+2) "Catch & handle the signal" - The kernal will suspend execution of the process's current code path & jump to a previous registered function.
+The process will then execute this function once the process returns to the function, It will jump back to wherever it caught the signal.
+
+3) "perform the default action" - THis action depends on the signal being sent. THe default action is often to terminate the process.
+Every siganl will have a default behaviour incase the process has not handled.
+
+Signal Identifiers - Every signal has a symbolic name that starts with the prefix 'SIG'
+For example: SIGINT is the signal sent when the user presses Ctrl+C
+             SIGKILL is signal sent when a process is forcefully terminated.
+
+These all signals are defined in a header file
+#include<signal.h>
+
+Signal No.	Signal Name	Description                        	        Default Action
+1	        SIGHUP	    Hangup detected on controlling terminal	    Terminate
+2	        SIGINT	    Interrupt from keyboard (Ctrl+C)	        Terminate
+3	        SIGQUIT	    Quit from keyboard (Ctrl+)	                Core Dump
+4	        SIGILL	    Illegal Instruction	                        Core Dump
+5	        SIGTRAP	    Trace/breakpoint trap	                    Core Dump
+6	        SIGABRT	    Abort signal	                            Core Dump
+7	        SIGBUS	    Bus error	                                Core Dump
+8	        SIGFPE	    Floating point exception	                Core Dump
+9	        SIGKILL	    Kill signal (cannot be caught)	            Terminate
+10	        SIGUSR1	    User-defined signal 1	                    Terminate
+11	        SIGSEGV	    Invalid memory reference (Segfault)	        Core Dump
+12	        SIGUSR2	    User-defined signal 2	                    Terminate
+13	        SIGPIPE	    Broken pipe	                                Terminate
+14	        SIGALRM	    Timer signal from alarm()	                Terminate
+15	        SIGTERM	    Termination signal	                        Terminate
+17	        SIGCHLD	    Child stopped or terminated	                Ignore
+18	        SIGCONT	    Continue if stopped	                        Continue
+19	        SIGSTOP	    Stop process (cannot be caught)	            Stop
+20	        SIGTSTP	    Stop typed at tty (Ctrl+Z)	                Stop
+21	        SIGTTIN	    Background read from tty	                Stop
+22	        SIGTTOU	    Background write to tty	                    Stop
+
+
+Basic Signal management:
+````````````````````````
+#include <signal.h>
+sighandler_t signal(int signum, sighandler_t my_handler);
+void my_handler(int signum);
+when a signal is delivered to a process, using signal(), the signal can either perform default action or ignore the particular signal.
+SIG_DFL - set the behaviour of the signal given by signo to its default. For example, in the case of SIGPIPE the process will terminate.
+SIG_IGN - Ignore the signal given by signo.
+
+Sending a signal:
+`````````````````
+The kill() system call, The basis of the common kill utility, sends a signal from one process to another:
+
+#include <sys/types.h>
+#include <signal.h>
+int kill(pid_t pid, int signo);
+

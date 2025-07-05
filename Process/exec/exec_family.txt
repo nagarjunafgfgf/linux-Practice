@@ -24,3 +24,28 @@ int execve(const char* pathname, char* const argv[], char* const envp[]);
 never returns on success;
 returns -1 on error
 Refer man 2 execve for further information
+
+FIle sharing between parent & child:
+````````````````````````````````````
+- When a fork() is performed, the child receives duplicates of all the parent's file descriptors.
+- This means the corresponding file descriptors in parent and child refer to the same file description.
+- The open file description contains the current file offset(as modified by read(), write(), lseek()).
+- As a result, these attributes of an open file are shared b/w the parent & child.
+
+process table contains process control block(Data structure block) of every process ID
+
+PCB(process control Block):
+```````````````````````````
+When a process crerated, PM will create PCB for every process.
+There are many data members of PCB
+. PID, PPID
+. Program counter
+. process state
+. Scheduling information
+. CPU Registers
+. Process priority
+. Memory management information
+. List of open files of process
+. many more.....
+
+*** The struct 'task_struct' represents process control block in Linux.

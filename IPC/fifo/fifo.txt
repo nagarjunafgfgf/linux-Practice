@@ -1,0 +1,14 @@
+FIFO - First In First Out:
+``````````````````````````
+- A FIFO is similar to a pipe called named pipes.
+- The principal difference b/w PIPE & FIFO
+A) FIFO has a name within the file system & is opened in the same way as a regular file where as PIPES does not have a name in file system.
+B) FIFO to be used for communication b/w 'unrelated process'(e.g: a client & server), but PIPEs are used to send data only b/w related process (e.g: parent-child process) 
+- Once a FIFO has been opened, We use same I/O system calls as are used with pipes & other files (read(), write() & close())
+- Just as with pipes, a FIFO has a write end & read end, data is read from FIFO in the same order as it is written (This means first dataa written to write end of fifo is the first read out from reading end of fifo)
+
+    Create:
+    ```````
+    #include <>sys/stat.h>
+    int mkfifo (const char* pathname, mode_t mode);
+    - returns 0 on success & -1 on error

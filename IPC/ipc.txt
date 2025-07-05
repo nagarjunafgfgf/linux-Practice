@@ -1,0 +1,20 @@
+Inter Process Communication:
+````````````````````````````
+- IPC are used to send/receive data b/w process.
+- IPC are also used to synchronise b/w process
+- IPC are usually communication based or synchronisation based
+
+    Communciation based:
+    ````````````````````
+        1) data transfer based:
+        - PIPE, FIFO, Message Queue and socket
+
+        2)memory sharing based:
+        - shared memory
+
+    Synchronisation based:
+    ``````````````````````
+    - semaphore
+    - Mutex (used for threads)
+    - Condition variable (used for threads)
+

@@ -1,0 +1,101 @@
+library introduction:
+````````````````````
+A library in Linux (or programming in general) is a collection of pre-compiled code that can be reused in a programs. 
+programmers don’t have to write complex and common functions that have already been written by others. So programmers link to libraries to save the time, reduce errors and focus on unique sides of their code instead of reinventing the wheel.
+
+For example, libc is a library that has functions for I/O operations and memory management, and it is used in almost every program in Linux
+
+two types of libraries:
+```````````````````````
+static library
+dynamic linked library
+
+static library: The code of the library is merged into the program in compilation process. The code of a static library is embedded directly into the executable file.
+``````````````
+Advantages:
+```````````
+. Self-contained executables, no dependency issues.
+. The speed at run-time occurs faster because its object code (binary) is in the executable file. Thus, calls made to the functions get executed quicker.
+Disadvantages: 
+`````````````
+. Larger binary size, harder to update.
+. Static libraries resist vulnerability because it lives inside the executable file.
+. Changes made to the files and program require relinking and recompilation
+
+dynamic linked library: The program doesn’t contain the library code. Instead, the program contains metadata and links to the required libraries. At the runtime, dynamic linker in Linux loads these libraries into the memory.
+``````````````````````
+Advantages: 
+```````````
+. Smaller executables, easier updates, memory efficiency.
+. It only needs one copy at runtime. It is dependent on the application and the library being closely available to each other
+. Multiple running applications use the same library without the need of each file having its own copy
+. Dynamic libraries are linked at run-time. It does not require recompilation and relinking when the programmer makes a change
+Disadvantages:
+``````````````
+. Dependency management, potential version conflicts.
+. However, what if the dynamic library becomes corrupt? The executable file may not work because it lives outside of the executable and is vulnerable to breaking
+.  Remember, the dynamic library lives outside of the executable, so calls would be made from the outside of the executable will takes time
+. 
+
+note: dynamic linked libraries can also be used and shared by other programs at the same time, so they also known as shared libraries.
+````
+Understanding the differences between these two types of libraries, their advantages, and their use cases is essential for any developer working in Linux. In this document, we will explore the concepts, creation, usage, and management of both static and dynamic libraries in detail.
+
+library locations in Linux
+Almost every libraries are located in three locations :
+
+/lib/
+/usr/lib/
+/usr/local/lib/
+/lib/ : Necessary libraries for booting the system and running basic commands in the root filesystem (for binaries in /bin or /sbin).
+This directory also contains kernel modules 5.
+
+/usr/lib/ : Libraries for user-installed software and non-essential system programs (for binaries in /usr/bin or /usr/sbin) .
+
+note:
+1- In modern sytems /lib/ are linked to /usr/lib/ and the content of both is the same.
+2- You might see /lib64/ for 64-bits systems or /lib32/ for 32-bits systems.
+
+/usr/local/lib : Contains libraries for software installed locally by the system administrator or users. These libraries are typically associated with programs compiled and installed manually (outside of the system’s package manager).
+
+Static library creation:
+````````````````````````
+1) cc -c fpic <filename>.c -> create objetct files by this command to use for the generation of library (fpic = positional independent code with -f as silent)
+
+2) ar rcs <userdefinedstaticlibearyname>.a <filename1>.o <filename2>.o  (r-insert, c-create, s-index)
+Ex:
+cc -c -fpic add.c
+ar rcs libstatic.a add.o sub.o mul.o 
+
+Dynamic library creation:
+`````````````````````````
+1) cc -c -fpic <filename>.c -> create objetct files by this command to use for the generation of library (fpic = positional independent code with -f as silent)
+2) cc -shared -o <userdefinedlibraryname>.so <filename1>.o <filename2>.o 
+Ex:
+cc -c fpic add.c
+cc -shared -o libdynamic.so add.o sub.o mul.o 
+
+
+Loadtime Library linking:
+````````````````````````
+Loading the library in linking irrespective of anything.
+These are three types:
+1) static linking at load time, results in using libstatic & depends on dynamic library for C & linux definations 
+gcc loadtimeLink.c ./libstatic.a
+
+2) static linking at load time with static keyword, results in using libstatic, C & linux definations statically
+gcc -static loadtimeLink.c ./libstatic.a
+
+1) dynamic linking at load time, results in using libstatic, C & linux definations dynamically(i.e., no definations present inside executable)
+gcc loadtimeLink.c ./libstatic.a
+
+Runtime Library linking:
+````````````````````````
+loading library based on demand of program at runtime.
+
+Function	Purpose	Type                                        Type
+dlopen()	Loads a shared library into memory at runtime.  	Library call
+dlsym()	    Retrieves the address of a symbol in the library.	Library call
+dlclose()	Unloads the library.	                            Library call
+dlerror()	Returns a human-readable string of the last error.  Library call
+

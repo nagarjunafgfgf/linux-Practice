@@ -1,0 +1,20 @@
+PIPES:
+``````
+- A PIPE is a byte stream used for IPC
+- A PIPE has two ends as read end & write end, refer to pipe.png
+- Pipes are uni-directional
+- Pipes have limited capacity (usually 64k bytes). A pipe is simply a buffer maintained in kernal memory.
+- When a PIPE is full with data further writes to PIPE will be blocked until the receive end process removes the data from PIPE.
+- Writing to PIPE puts data where as reading data from PIPE removes the data from PIPE.
+
+    Creation:
+    `````````
+    #include <unistd.h>
+    int pipe(int fd[2]);
+    - pipe() open 'two file descriptor', one in fd[0]. other in fd[1]
+    - Returns 0 on success & -1 on error
+
+    SIGPIPE signal:
+    ```````````````
+    - SIGPIPE signal (broken pipe signal) is sent to write end process when read end is closed.
+

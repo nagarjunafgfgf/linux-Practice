@@ -1,6 +1,9 @@
-- Processes and Programs
-Everything is considered as process.
-- Process ID and Parent Process ID
+process introduction:
+`````````````````````
+A program which is under execution is called process.
+- Process ID and Parent Process ID are allocated to process by process manager when it was running.
+- When a process started execution under a terminal by default bash(shell) acts as parent.
+- Shell is the interpreter b/w user & OS.
 - Memory Layout of a Process.
 - Examples of different memory section of Process using C Code.
 * Refer program_process.png
@@ -9,8 +12,10 @@ Everything is considered as process.
 - In Linux Processes have a Parent-child relation.
 - A Process is created by its parent
 - In Linux startup sequence
-- Process ‘0’ is first process – called ‘swapper’ process
+- Process ‘0’ is first process – called ‘scheduler’ process
 - Process ‘1’ is ‘Init’ Process – Init process plays an important role. It creates and monitors set of  other process.
+- vi proc/sys/kernal/pid-max -> dispalys the range of PID's can hold by this linux
+- Once, it reached max, it wills tart agian from 300, first 300 PID's are reserved
 - Init process becomes the parent of any ‘Orphan’ Process.
 - Man 8 init – for manual page on ‘init’ process.
 - #include <unistd.h>
@@ -20,18 +25,47 @@ The Linux kernel limits process IDs to being less than or equal to 32,767(defaul
 /proc/sys/kernel/pid_max – contains 1 greter than actual max number of process allowed in system.
 ‘Ps -ef’ – get running process and PID
 
+- ./a.out & -> Makes the process should run in background (This process is called daemon process)
+[1] <PID>
+If you make one more process run in background
+[2] <PID>
+
+- These daemon process's are crated & handled same as remaining process's in system
+- Daemon process's are start running at system time & complete when system shutdown.
+
 Process states:
 ```````````````
 A process is “created” state using fork() system call.
-‘Running’ state – Process is running in main memory.
-‘Ready to Run’ in ‘Main Memory’
-‘Ready to Run’ in ‘Swap Memory’
-‘Sleep’ state in ‘Main Memory’
-‘Sleep’ state in ‘Swap memory’
-‘Blocked’ state in ‘Main Memory’
-‘Blocked’ state in ‘Swap Memory’
-‘Terminated’ state
+. Ready - Waiting for CPU
+. Running - Process is excuting by CPU
+. Wait - waiting for scanf() to read input 
+. Delay - user provides sleep()
+. Suspended - process receivces signal number 19, 18 for resume
 * Refer process_states.png
+
+PCB(process control Block):
+```````````````````````````
+When a process crerated, PM will create PCB for every process.
+There are many data members of PCB
+. PID, PPID
+. Program counter
+. process state
+. Scheduling information
+. CPU Registers
+. Process priority
+. Memory management information
+. List of open files of process
+. many more.....
+
+Life of PCB is life of process
+
+Context switch:
+```````````````
+- Context switch is a mechanism to store & restore the context or state of process into PCB.do that process can be resumed from same point at a later time.
+- Using context switch multiple process's will share single CPU.
+- Context switch is mandatory in multi processing, context switch time can't be zero & possible minimize it by using threads
+- due context switch, extra burden on CPU.
+- it is overhead as the system is not doing any useful work while switching
 
 Memory Layout of process:
 `````````````````````````
