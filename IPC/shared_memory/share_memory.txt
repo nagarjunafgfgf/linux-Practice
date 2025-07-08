@@ -1,0 +1,65 @@
+POSIX Shared Memory:
+````````````````````
+- POSIX shared memory allows to share a mapped memory region b/w unrelated process's.
+- Shared memory entries are present in 'dev/shm'.
+- Shared memory is the fastest IPC mechanism as no extra kernal data structures are involved.
+- In other IPC, If data needs to be sent from process-1 to process-2, then data from process-1 user space to kernal space needs to be copied, then again from kernal space to user space of process-2 needs to perform
+- To use a POSIX shared memory object, We perform two steps:
+    step-1:
+    ```````
+        - use shm_open() function to open an object with specified name.
+        - The shm_open() function is anlogous to the open() system call.
+        - It wither creates anew shared memory object or opens an existing one.
+        - shm_open() returns a file descriptor referring to the share memory.
+    Note: The shared memory created newly is of length '0' bytes.
+
+    step-2:
+    ```````
+        - Define share memory length.
+    step-3:
+    ```````
+        - File descriptor obtained in the previous step is referred in mmap()
+        - This maps the shared memory object into the process's virtual address space
+    Note: Any read/write to previous process's virtual memory will be actually read/written from shared memory (part of physical RAM memory)
+
+    shm_open() syntax:
+    ``````````````````
+    step-1:
+    - shm_open() creates & opens a new shared memory object or opens an existing shared memory. The argument to shm_open() are anloh=gous to those for open()
+
+    #include <fcntl.h>
+    #include <sys/stat.h>
+    #incluide <sys/mman.h>
+
+    int shm_open(const char* name, int oflag, mode_t mode);
+    - Returns file descriptor on success & -1 on error.
+    - oflag - can take one or more flags as
+        * O_RDONLY - open existing shared memory for read only purpose
+        * O_RDWR - open existing shared memory for read/write purpose
+        * O_TRUNC - To truncate shared memory to zero lenght
+        * O_EXCL- to create new share memory
+    Note: The shm_ope() is similar to open() for regular files.
+    
+    step-2:
+    - When a shared memory is newly created its size is zero
+    - User needs to assign size required for the shared memory, this is similar to creating a buffer with given size
+    #include <unistd.h>
+    int ftruncate( int fd, off_t length);
+    - Fd is file descriptor obtained from shm_open() & lenght is the required length in bytes of shared memory.
+
+    step-3:
+    - mmap() is used to amp the shared memory created to the process virtual map.
+    #incluide <sys/mman.h>
+    int mmap(void *addr, size_t length,int prot, int flags, pint fd, off_t offset);
+    * addr - address of process virtual memory to which the shared memory is mapped, If 'addr' is NULL then kernal chooses the address at which to crrate the mapping.
+    * length - length of the created shared memory
+    * prot - describes the memory protection of mapping (PROT_READ for read & PROT_WRITE for write)
+    * flags - foe shared memory flags use value 'MAP_SHARED' describing that the memory can be shared, i.e., updates to this mapped memory is visible among process.
+    * Fd - file descriptor obtained from shm_open()
+
+    - Returns virtual memory of process to which the shared memory is mapped on success
+    - value MAP_FAILED ((void*)-1) is returned and errno is set to indicate the cause of the error
+    - Refer man 2 mmap for more information
+
+
+

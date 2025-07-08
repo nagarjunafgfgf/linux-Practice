@@ -123,5 +123,47 @@ Thread Synchronisation:
             - Threads can lock the same set of mutexes, they should always lock them in the same order.
             - For example, In a scenario the deadlock could avoided if two threads always lock the mutexes in the order mutex1 followed by mutex2.
 
+            pthread_mutex_trylock & pthread_mutex_timedlock:
+            ````````````````````````````````````````````````
+            - The pthread_mutex_timedlock() is the same as pthread_mutex_lock()
+            - Except that the caller can specify an additional argument, abstime that palces a limit on the time that the thread will sleep while waiting to acquire the mutex.
+            - If the time interval specified by its abstime argument expires without the caller becoming the owner of the mutex, pthread_mutex_timedlock() returns error ETIMEDOUT 
+
     Conditional Variables:
     ``````````````````````
+    - A conditional variable allows signalling from one thread to other thread about changes in the state of a shared variable.
+    - Condition variables  help to define the sequence of the thread execution,
+    For eg: In case of producer & consumer appilcations, first the producer thread runs & then the producer thread signals the sonsumer thread for further execution.
+    - In condition variable the thread waiting fo shared resource will be made to sleep & as soon as it gets signal from other thread, the thread wakes up & executes (like accessing/modifying shared resource)
+    - A condition variable is always used in conjunction with a mutex.
+
+        Statically allocated Condition variables:
+        `````````````````````````````````````````
+        - Condition variables can be allocated statically or dynamically
+        pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+        Signaling & Waiting on Condition Variables:
+        ```````````````````````````````````````````
+        - The principal of condition variable is 'signal and wait'.
+        - The 'signal' operation is a notification to one or more waiting threads that a shared variable's state has changed.
+        - The 'wait' operation is the method of blocking until such a notification is received from other Thread.
+
+        Syntax:
+        ```````
+        - The pthread_cond_signal() fucntions signal's the condition variable specofies by cond.
+        - The ptread_cond_wait() blocks thread until the condition variable cond is signaled.
+            #Include <pthread.h>
+            int pthread_cond_signal(pthread_cond_t* cond);
+            int pthread_cond_wait(pthread_cond_t* cond, pthread_mutex_t* mutex);
+        - All return 0 on success & a position error number on error.
+
+        Working principle:
+        ``````````````````
+        int pthread_cond_wait(pthread_cond_t* cond, pthread_mutex_t* mutex);
+
+        step1: The thread calling pthread_cond_wait unlocks Mutex-M
+        step2: Blocks on the condition variable 'cond' to receive the signal from other thread
+        step3: As soon as it receives required signal, it further locks Mutex -M
+        Note: step1 & step2 is executed as a atomic operation
+        
+

@@ -1,0 +1,102 @@
+Semaphore:
+``````````
+- POSIX semaphores allow processes & threads to synchronize access to shared resources.
+- Semaphores are used to execute the critical section (resourcer shared by different process/threads) in a atomic manner.
+- POSIX semaphore is an integer that the system never allows to go below 0
+- These are two types:
+1) Named semaphores: This semaphore has a name as specified in sem_open()
+````````````````````
+sem_open() - opens or creates asemaphore, initialize the semaphore & returns a handle for use in alter calls
+sem_post() - Increments a semaphore's value
+sem_wait() - Decrements a semaphore's value
+sem_getvalue() - retrives a semaphore's current value
+sem_close() - removes the calling process's association with a semaphore that it previously opened
+sem_unlink() - Removes a semaphore identified by name & marks the semaphore for deletion/destoyed when all processes have closed it
+
+Syntax:
+```````
+    sem_open():
+    ```````````
+    - Refer man sem_open to see complete details
+    #include <fcntl.h> // for O_*constants
+    #include <sys/stat.h> // for mode constants
+    #include <semaphore.h>
+
+    sem_t *sem_open(const *name, int oflag);
+    sem_t *sem_open(const *name, int oflag, mode_t mode, unsigned int value);
+    - link the program woth -lpthread
+    - If O_CREAT is specified on o_flag, then a new semaphore is created if one with given name doesn't exist.
+    - If O_CREAT is specified in flags, then two further arguments are required: mode & value
+    - Mode - similar as file open mode - O_RDONLY, O_WRONLY & O_RDWR
+    Note: When a program is opening a existing semaphore, We need to take care of the 'oflag' as most of the times to perform semaphore operations both 'read' & 'write' permission is required.
+    `````
+    - value -  Is an unsigned integer that specifies the initial value to be assigned to the new semaphore.
+    - When a child is created via fork(), it inherits reference to all of the named semaphores that are open in its parent.
+        After the fork(), the parent & child can use these semaphores to synchoronize their actions.
+
+    sem_close();
+    ````````````
+    #include <semaphore.h>
+    int sem_close(sem_t *sem);
+    - Returns 0 on success & -1 on error
+
+    sem_unlink();
+    `````````````
+    #include <semaphore.h>
+    int sem_unlink(const char* *name);
+    - Returns 0 on success & -1 on error
+
+    sem_wait():
+    ```````````
+    - If the semaphore currently has a value greater than 0, sem_wait() returns immedialtely,. if the value of the semaphore is currently 0
+        Sem_wait() blocks until the semaphore value raises above 0 at that time, the semaphore is decremented & sem_wait() returns.
+
+    sem_post():
+    ```````````
+    - This function increments the value of semaphore by 1
+    #include <semaphore.h>
+    int sem_post(sem_t *sem);
+    - Returns 0 on success & -1 on error
+
+    sem_getvalue():
+    ```````````````
+    - The sem_getvalue() function returns the current value of the semaphore referred to by 'sem' in the int pointed to by 'sval'
+    #include <semaphore.h>
+    int sem_getvalue(sem_t *sem, int* sval);
+    - Returns 0 on success & -1 on error
+
+2) Unnamed semaphore: This type of semaphore doesn't have a name,it resides at an location in memory  
+`````````````````````
+- Unnamed semaphore (also known as memory-based semaphore) are variable of type sem_t that are stored in memoery allocated by the application.
+- The semaphore is made available to the process's or threads that use it by placing it in area of memory that they shared.
+Note: named semaphore was present in file system similar to regular file, Where-as a un-named semaphore does not exist on file system rather on Volatile memory like RAM.
+- Operating on unnamed semaphore use the same functions (sem_wait(), sem_post(), sem_getvalue()) that are used to operate on named semaphores.
+- In addition, two more functions are required
+a) sem_init() - function initiliazes a semaphore & informs the system of whether the semaphore will be shared b/w process's or thread's of a single process.
+b) sem_destroy() - function destroys a semaphore
+
+Note: These two functions should not used with named semaphores.
+
+    Initializing:
+    `````````````
+    #include <semaphore.h>
+    int sem_init(sem_t *sem, int pshared, unsinged int value);
+    - Returns 0 on success & -1 on error
+    - The pshared argument indicates whether the semaphore is to be shared b/w threads or process's.
+    - If pshared is 0, then the semaphore is to be shared b/w threads of the calling process.
+    - If pshared is nonzero, then semaphore is to be shared b/w process's.
+
+    Destroying:
+    ```````````
+    - sem_destroy() function destroys the semaphore sem which is an unnamed semaphore that was previously initialized using sem_init().
+    It is good practice to destroy a semaphore only if no process's or thread's are waiting on it.
+    #include <semaphore.h>
+    int sem_destroy(sem_t *sem);
+    - Returns 0 on success & -1 on error
+
+
+
+
+
+
+
